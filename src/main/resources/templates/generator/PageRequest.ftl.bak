@@ -1,0 +1,110 @@
+package ${classInfo.packagePath}.core.page;
+
+import com.alibaba.fastjson.annotation.JSONField;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.io.Serializable;
+/**
+*
+* Created by liupeng6251@163.com on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+*/
+
+public class PageRequest implements Serializable{
+
+    private Page page = new Page();
+
+
+    private String orderByClause;
+
+    private boolean distinct;
+
+    public boolean isDistinct() {
+       return distinct;
+    }
+
+    public void setDistinct(boolean distinct) {
+      this.distinct = distinct;
+    }
+
+    public Page getPage() {
+        return page;
+    }
+
+    public void setPage(Page page) {
+        this.page = page;
+    }
+
+    public String getOrderByClause() {
+        return orderByClause;
+    }
+
+    public void setOrderByClause(String orderByClause) {
+        this.orderByClause = orderByClause;
+    }
+
+    @JSONField(serialize = false)
+    public int getOffset() {
+        if (this.page == null) {
+            return 0;
+        } else {
+            int tmp = (this.page.current - 1) * this.page.pageSize;
+            return tmp < 0 ? 0 : tmp;
+        }
+    }
+
+    @JSONField(serialize = false)
+    public int getLimit() {
+        return this.page == null ? 0 : this.page.pageSize;
+    }
+
+    public static class Page {
+        private static final long serialVersionUID = -9116229816861557536L;
+        int pageSize;
+        int current;
+
+        public Page() {
+            this.pageSize = 15;
+            this.current = 1;
+        }
+
+        public Page(int size, int current) {
+            this.pageSize = size;
+            this.current = current;
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public void setPageSize(int pageSize) {
+            this.pageSize = pageSize;
+        }
+
+        public int getCurrent() {
+            return current;
+        }
+
+        public void setCurrent(int current) {
+            this.current = current;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Page page = (Page) o;
+
+            if (pageSize != page.pageSize) return false;
+            return current == page.current;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = pageSize;
+            result = 31 * result + current;
+            return result;
+        }
+    }
+}
