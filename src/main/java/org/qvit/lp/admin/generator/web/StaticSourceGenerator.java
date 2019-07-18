@@ -9,6 +9,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -28,10 +29,13 @@ public class StaticSourceGenerator implements IGenerator {
         for (Resource resource : resources) {
             try {
                 String path = resource.getURL().getPath();
-                String classPath = StringUtils.substring(path, StringUtils.indexOf(path, "vue") + 4, path.length());
+                InputStream is=resource.getInputStream();
+                is.available();
+                String classPath = StringUtils.substring(path, StringUtils.indexOf(path, "/vue/") + 4, path.length());
+                System.err.println(classPath);
                 ZipEntry entry = new ZipEntry(projectName + File.separator + projectName + "-vue/" + File.separator + classPath);
                 zipOutputStream.putNextEntry(entry);
-                IOUtils.copy(resource.getInputStream(), zipOutputStream);
+                IOUtils.copy(is, zipOutputStream);
                 zipOutputStream.closeEntry();
             }catch(Exception e){
                 System.err.println(e.getMessage());
